@@ -253,13 +253,9 @@ namespace Microsoft.DotNet.SignTool
 
         private static void GetPEInfo(string fullPath, out bool isManaged, out string publicKeyToken, out string targetFramework, out string copyright)
         {
-            AssemblyName assemblyName;
-            try
-            {
-                assemblyName = AssemblyName.GetAssemblyName(fullPath);
-                isManaged = true;
-            }
-            catch
+            AssemblyName assemblyName = ContentUtil.GetAssemblyName(fullPath);
+
+            if (assemblyName == null)
             {
                 isManaged = false;
                 publicKeyToken = string.Empty;
@@ -268,6 +264,7 @@ namespace Microsoft.DotNet.SignTool
                 return;
             }
 
+            isManaged = true;
             var pktBytes = assemblyName.GetPublicKeyToken();
 
             publicKeyToken = (pktBytes == null || pktBytes.Length == 0) ? string.Empty : string.Join("", pktBytes.Select(b => b.ToString("x2")));

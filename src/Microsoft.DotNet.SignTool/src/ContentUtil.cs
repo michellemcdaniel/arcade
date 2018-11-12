@@ -11,6 +11,7 @@ using System.Reflection.PortableExecutable;
 using System.Reflection.Metadata;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 
 namespace Microsoft.DotNet.SignTool
 {
@@ -63,6 +64,18 @@ namespace Microsoft.DotNet.SignTool
                 var entry = headers.PEHeader.CertificateTableDirectory;
 
                 return entry.Size > 0;
+            }
+        }
+
+        public static AssemblyName GetAssemblyName(string fullPath)
+        {
+            try
+            {
+                return AssemblyName.GetAssemblyName(fullPath);
+            }
+            catch
+            {
+                return null;
             }
         }
     }

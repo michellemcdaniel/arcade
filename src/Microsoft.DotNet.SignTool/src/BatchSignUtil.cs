@@ -261,7 +261,7 @@ namespace Microsoft.DotNet.SignTool
         {
             foreach (var file in _batchData.FilesToSign)
             {
-                if (file.IsPEFile())
+                if (file.IsPEFile() && ContentUtil.GetAssemblyName(file.FullPath) != null)
                 {
                     using (var stream = new FileStream(file.FullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
                     using (var peReader = new PEReader(stream))
