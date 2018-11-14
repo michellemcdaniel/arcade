@@ -266,9 +266,9 @@ namespace Microsoft.DotNet.SignTool
                     using (var stream = new FileStream(file.FullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
                     using (var peReader = new PEReader(stream))
                     {
-                        if (ContentUtil.IsPublicSigned(peReader))
+                        if (!ContentUtil.IsPublicSigned(peReader))
                         {
-                            _log.LogError($"Assembly {file} is not strongly-nam signed properly");
+                            _log.LogError($"Assembly {file.FullPath} is not strong-name signed properly.");
                         }
                     }
                 }
