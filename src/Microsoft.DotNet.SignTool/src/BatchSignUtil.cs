@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.IO.Packaging;
@@ -23,13 +24,18 @@ namespace Microsoft.DotNet.SignTool
         private readonly IBuildEngine _buildEngine;
         private readonly BatchSignInput _batchData;
         private readonly SignTool _signTool;
+        private readonly SignToolArgs _signToolArgs;
+        private readonly ImmutableArray<string> _relaxStrongNameCheck;
 
-        internal BatchSignUtil(IBuildEngine buildEngine, TaskLoggingHelper log, SignTool signTool, BatchSignInput batchData)
+        internal BatchSignUtil(IBuildEngine buildEngine, TaskLoggingHelper log, SignTool signTool, 
+            BatchSignInput batchData, SignToolArgs signToolArgs, ImmutableArray<string> relaxStrongNameCheck)
         {
             _signTool = signTool;
             _batchData = batchData;
             _log = log;
             _buildEngine = buildEngine;
+            _signToolArgs = signToolArgs;
+            _relaxStrongNameCheck = relaxStrongNameCheck;
         }
 
         internal void Go()
@@ -261,16 +267,26 @@ namespace Microsoft.DotNet.SignTool
         {
             foreach (var file in _batchData.FilesToSign)
             {
-                if (file.IsPEFile() && ContentUtil.GetAssemblyName(file.FullPath) != null)
+                if (_relaxStrongNameCheck.Contains(file.FileName))
                 {
-                    using (var stream = new FileStream(file.FullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
-                    using (var peReader = new PEReader(stream))
-                    {
-                        if (!ContentUtil.IsPublicSigned(peReader))
-                        {
-                            _log.LogError($"Assembly {file.FullPath} is not strong-name signed properly.");
-                        }
-                    }
+                    continue;
+                }
+
+                var process = Process.Start(new ProcessStartInfo()
+                {
+                    FileName = _signToolArgs.SNBinaryPath,
+                    Arguments = $@"-v ""{file.FullPath}"" > nul",
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardError = false,
+                    RedirectStandardOutput = false
+                });
+
+                process.WaitForExit();
+
+                if (process.ExitCode != 0)
+                {
+                    _log.LogError($"Assembly {file.FullPath} is not strong-name signed properly.");
                 }
             }
         }

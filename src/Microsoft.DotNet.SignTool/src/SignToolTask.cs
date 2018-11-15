@@ -129,6 +129,12 @@ namespace Microsoft.DotNet.SignTool
                 return;
             }
 
+            if (!DryRun && (string.IsNullOrEmpty(SNBinaryPath) || !File.Exists(SNBinaryPath) || !SNBinaryPath.EndsWith("sn.exe")))
+            {
+                Log.LogError($"An incorrect full path to 'sn.exe' was specified: {SNBinaryPath}");
+                return;
+            }
+
             var enclosingDir = GetEnclosingDirectoryOfItemsToSign();
 
             PrintConfigInformation();
@@ -148,7 +154,7 @@ namespace Microsoft.DotNet.SignTool
 
             if (Log.HasLoggedErrors) return;
 
-            var util = new BatchSignUtil(BuildEngine, Log, signTool, signingInput);
+            var util = new BatchSignUtil(BuildEngine, Log, signTool, signingInput, signToolArgs);
 
             if (Log.HasLoggedErrors) return;
 
