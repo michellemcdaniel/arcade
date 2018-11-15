@@ -72,6 +72,7 @@
         TestSign="$(_TestSign)"
         CertificatesSignInfo="$(CertificatesSignInfo)"
         ItemsToSign="@(ItemsToSign)"
+        RelaxStrongNameCheck="@(RelaxStrongNameCheck)"
         StrongNameSignInfo="@(StrongNameSignInfo)"
         FileSignInfo="@(FileSignInfo)"
         FileExtensionSignInfo="@(FileExtensionSignInfo)"

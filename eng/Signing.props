@@ -34,4 +34,20 @@
     <FileSignInfo Include="Microsoft.Deployment.WindowsInstaller.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Microsoft.Deployment.WindowsInstaller.Package.dll" CertificateName="3PartySHA2" />
   </ItemGroup>
+
+  <!-- These are 3rd party without strong name or MS files that we don't need to sign. -->
+  <ItemGroup>
+    <RelaxStrongNameCheck Include="sni.dll" />
+    <RelaxStrongNameCheck Include="SevenZip.dll" />
+    <RelaxStrongNameCheck Include="winterop.dll" />
+    <RelaxStrongNameCheck Include="Mono.Options.dll" />
+    <RelaxStrongNameCheck Include="Octokit.dll" />
+    <RelaxStrongNameCheck Include="Microsoft.DotNet.SignCheckLibrary.dll" />
+    <RelaxStrongNameCheck Include="Microsoft.DotNet.Darc.dll" />
+    <RelaxStrongNameCheck Include="Microsoft.DotNet.DarcLib.dll" />
+    <RelaxStrongNameCheck Include="Microsoft.DotNet.SwaggerGenerator.CmdLine.dll" />
+    <RelaxStrongNameCheck Include="Microsoft.DiaSymReader.Native.amd64.dll" />
+    <RelaxStrongNameCheck Include="Microsoft.DiaSymReader.Native.arm.dll" />
+    <RelaxStrongNameCheck Include="Microsoft.DiaSymReader.Native.x86.dll" />
+  </ItemGroup>
 </Project>
