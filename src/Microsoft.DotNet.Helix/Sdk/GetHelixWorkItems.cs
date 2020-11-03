@@ -54,7 +54,7 @@ namespace Microsoft.DotNet.Helix.Sdk
                 var metadata = job.CloneCustomMetadata();
                 metadata["JobName"] = jobName;
                 metadata["WorkItemName"] = name;
-                var consoleUri = HelixApi.Options.BaseUri.AbsoluteUri.TrimEnd('/') + $"/api/2019-06-17/jobs/{jobName}/workitems/{Uri.EscapeDataString(name)}/console";
+                var consoleUri = HelixApi.GetConsoleUri(jobName, workItemName);
                 metadata["ConsoleOutputUri"] = consoleUri;
 
                 return metadata;

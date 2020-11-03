@@ -8,6 +8,10 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.DotNet.Helix.Client
 {
+    partial interface IHelixApi
+    {
+        public string GetConsoleUri(string jobName, string workItemName);
+    }
     partial class HelixApiResponseClassifier
     {
         public override bool IsRetriableException(Exception exception)
@@ -46,6 +50,11 @@ namespace Microsoft.DotNet.Helix.Client
                     throw new ArgumentException(message, ex);
                 }
             }
+        }
+
+        public string GetConsoleUri(string jobName, string workItemName)
+        {
+            return Options.BaseUri.AbsoluteUri.TrimEnd('/') + $"/api/2019-06-17/jobs/{jobName}/workitems/{Uri.EscapeDataString(workItemName)}/console";
         }
     }
 }
