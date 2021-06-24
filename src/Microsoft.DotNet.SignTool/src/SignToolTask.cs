@@ -14,12 +14,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Resources;
 using System.Runtime.Versioning;
+using System.Threading;
 
 namespace Microsoft.DotNet.SignTool
 {
 #if NET472
     [LoadInSeparateAppDomain]
-    public class SignToolTask : AppDomainIsolatedTask
+    public class SignToolTask : AppDomainIsolatedTask, ICancelableTask
     {
         static SignToolTask() => AssemblyResolution.Initialize();
 #else
@@ -144,6 +145,12 @@ namespace Microsoft.DotNet.SignTool
         // This property can be removed if https://github.com/dotnet/arcade/issues/6747 is implemented
         internal BatchSignInput ParsedSigningInput { get; private set; }
 
+        private static readonly CancellationTokenSource _cancellationSource = new CancellationTokenSource();
+
+        private static readonly CancellationToken CancellationToken = _cancellationSource.Token;
+        public void Cancel() => _cancellationSource.Cancel();
+
+
         public override bool Execute()
         {
 #if NET472
@@ -151,7 +158,7 @@ namespace Microsoft.DotNet.SignTool
 #endif
             try
             {
-                ExecuteImpl();
+                ExecuteImpl(CancellationToken);
                 return !Log.HasLoggedErrors;
             }
             finally
@@ -163,7 +170,7 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-        public void ExecuteImpl()
+        public void ExecuteImpl(CancellationToken cancellationToken)
         {
             if (!DryRun && typeof(object).Assembly.GetName().Name != "mscorlib" && !File.Exists(MSBuildPath))
             {
