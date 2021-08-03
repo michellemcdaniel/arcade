@@ -84,6 +84,19 @@ For example, for runtime, we would add
 }
 ```
 
+Optionally, you may also add an assignee to the build object, which will cause Build Monitor to assign all issues opened for a given build definition to the listed github alias:
+
+```json
+{
+    "Project": "internal",
+    "DefinitionPath": "\\dotnet-release\\Validate-DotNet",
+    "Branches": [ "main" ],
+    "Assignee": <github alias>,
+    "IssuesId": <id that matches an item in the Issues array>,
+    "Tags": [ <repository name> ]
+}
+```
+
 The `Issues` array controls where issues will be opened for builds that fail. You will need to update the `Issues` array in the same settings.json file, with the following information:
 
 ```json
